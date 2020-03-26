@@ -29,3 +29,7 @@
         {% block content %}{% endblock %}
     </body>
 </html>
+
+{% block scripts %}
+    {{ moment.include_moment() }}
+{% endblock %}

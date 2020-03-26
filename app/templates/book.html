@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% if arrayOwner %}
+  {% for item in arrayOComment %}
+    {{ item|safe }}
+  {% endfor %}
+{% else %}
+
+{% endif %}
+
+
+{% block content %}
+    <h1>Sign In</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.clientComment.label }}<br>
+            {{ form.clientComment(size=32) }}<br>
+            {% for error in form.clientComment.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.ownerComment.label }}<br>
+            {{ form.ownerComment(size=32) }}<br>
+            {% for error in form.ownerComment.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/schedule.js') }}"></script>
+{% endblock %}

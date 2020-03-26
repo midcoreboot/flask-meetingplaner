@@ -3,7 +3,9 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
-from app.models import User
+from app.models import User, Meeting
+from datetime import datetime
+from flask_moment import Moment
 
 
 @app.route('/')
@@ -60,3 +62,36 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+
+@app.route('/book', methods=['GET', 'POST'])
+def book():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+    date = str(datetime.utcnow())
+    meetings = Meeting.query.filter(Moment(Meeting.date).isAfter(date))
+    arrayStart = [None]
+    arrayEnd = [None]
+    arrayOwner = [None]
+    arrayOComment = [None]
+    arrayCComment = [None]
+    if meetings is not None:
+        for entries in meetings:
+            arrayDate += meetings.date
+            arrayStart += meetings.time_start
+            arrayEnd += meetings.time_end
+            #client = meetings.client_id
+            arrayOComment += meetings.manager_comment
+            arrayCComment += meetings.client_comment
+        return render_template('book.html', title='Book', arrayStart=arrayStart, arrayEnd=arrayEnd, arrayOComment=arrayOComment, arrayCComment=arrayCComment)
+    else:
+        return render_template('book.html', title='Book')
+    if form.validate_on_submit():
+        starttime = form.starttime.data
+        endtime = form.endtime.data
+        date = form.date.data
+        ownerComment = form.oComment.data
+        clientComment = form.cComment.data
+        meeting = Meeting(date=date, time_start=starttime, time_end=endtime, client_comment=clientComment, owner_comment=ownerComment)
+        db.session.add(meeting)
+        db.session.commit()

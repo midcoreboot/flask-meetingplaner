@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    meetings = db.relationship('Meetings', backref='manager', lazy='dynamic')
+    meetings = db.relationship('Meeting', backref='manager', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -25,14 +25,15 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-class Meetings(db.Model):
+
+class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime)
     time_start = db.Column(db.Integer, index=True)
     time_end = db.Column(db.Integer, index=True)
-    client_id = db.Column(db.Integer, db.ForeignKey(user.id))
+    client_id = db.Column(db.Integer, db.ForeignKey(User.id))
     client_comment = db.Column(db.String(255))
     manager_comment = db.Column(db.String(255))
 
-
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return '<Meeting {}>'.format(self.id)
